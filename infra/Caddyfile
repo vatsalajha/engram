@@ -1,0 +1,26 @@
+# infra/Caddyfile
+#
+# Reverse proxy for Engram on Alibaba Cloud ECS with automatic HTTPS.
+# Caddy provisions + renews the Let's Encrypt certificate on its own —
+# no certbot, no cron, no manual renewal.
+#
+# Setup:
+#   1. Point an A record for your domain at the ECS public IP.
+#   2. Replace engram.example.com below.
+#   3. sudo cp infra/Caddyfile /etc/caddy/Caddyfile && sudo systemctl reload caddy
+#
+# SSE note: flush_interval -1 disables response buffering so /act streams
+# tokens to the browser immediately.
+
+engram.example.com {
+	encode gzip
+
+	reverse_proxy 127.0.0.1:3000 {
+		flush_interval -1
+	}
+
+	log {
+		output file /var/log/caddy/engram-access.log
+		format json
+	}
+}

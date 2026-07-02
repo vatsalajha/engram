@@ -1,0 +1,33 @@
+{
+  "name": "engram",
+  "version": "0.1.0",
+  "description": "Autonomous memory agent powered by Qwen Cloud",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/api/server.ts",
+    "build": "tsc -p tsconfig.check.json && tsc -p tsconfig.build.json",
+    "start": "node dist/api/server.js",
+    "test": "node --import=tsx/esm --test test/qwen.test.ts test/db.test.ts test/belief.test.ts test/write.test.ts test/read.test.ts test/packer.test.ts test/sleep.test.ts test/mcp.test.ts test/api.test.ts test/loop.test.ts",
+    "eval": "tsx eval/run.ts",
+    "smoke": "tsx src/llm/smoke.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.0",
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "better-sqlite3": "^9.6.0",
+    "dotenv": "^17.4.2",
+    "hono": "^4.6.0",
+    "ioredis": "^5.4.1",
+    "openai": "^4.67.0",
+    "sqlite-vec": "^0.1.6",
+    "tiktoken": "^1.0.22",
+    "ulid": "^2.3.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/node": "^22.9.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
+  }
+}

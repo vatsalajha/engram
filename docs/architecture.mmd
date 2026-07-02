@@ -1,0 +1,39 @@
+flowchart TD
+    subgraph SURFACES["SURFACES"]
+        WEB["Web demo\nReact 19 + Vite + Tailwind · SSE"]
+        MCPC["MCP clients\nClaude Desktop · Cursor · custom agents"]
+    end
+
+    subgraph API["API — Hono · Node 20 · Alibaba Cloud ECS (pm2 + Caddy auto-TLS)"]
+        ACT["POST /act\nSSE agent turn"]
+        FB["POST /feedback\nbelief signal"]
+        SLP["POST /sleep\nforce sleep cycle"]
+        MEMR["GET /memories\nlist + graph edges"]
+        ADM["GET /admin/stats\ncounts · sleep runs · Qwen cost"]
+        MCPS["MCP /mcp\nremember · recall · forget · list_memories · act · memory_stats"]
+    end
+
+    subgraph CORE["AGENT CORE — server-authoritative · idempotent writes"]
+        LOOP["perceive → recall(B) → decide → respond\n→ reflect → write (post-response queue)"]
+        BELIEF["BELIEF ENGINE\nconfidence ± η on confirm/contradict\nfloor → archive hypotheses / flag review"]
+        SLEEP["SLEEP CYCLE\nconsolidate (derived_from edges)\ndecay + 48h expiry · INFER hypotheses"]
+    end
+
+    subgraph QWEN["QWEN via DashScope — Alibaba Cloud"]
+        QP["qwen-plus\ndecide · extract · supersession verdicts\ninference · consolidation summaries"]
+        QF["qwen-flash\nrerank · compress-to-fit · eval grading"]
+        EMB["text-embedding-v4\n1024-dim · batch ≤10"]
+    end
+
+    subgraph ENGINE["MEMORY ENGINE"]
+        W["WRITE\nextract → content-hash dedupe → semantic dedupe\n→ batched supersession → store + edges"]
+        R["READ\nFTS5 BM25 ∥ vec cosine → RRF k=60\n→ utility (.45 rel · .20 sal · .15 conf · .10 rec · .10 typ)\n→ pack ≤ B tokens (25% reserved · compress overflow)"]
+    end
+
+    subgraph DB["SQLite WAL · FTS5 · sqlite-vec (1024-dim cosine)"]
+        T["memories (confidence · session provenance · content_hash)\nmemory_edges (supersedes · derived_from · supports · contradicts)\nbelief_events · episodic_log · sleep_runs · eval_runs"]
+    end
+
+    SURFACES --> API --> CORE
+    CORE <--> QWEN
+    CORE --> ENGINE --> DB
